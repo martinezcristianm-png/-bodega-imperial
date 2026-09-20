@@ -5,92 +5,50 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bodega Imperial - Precios</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#171717}
-.wrap{max-width:760px;margin:auto;padding:24px 16px}.head{background:#171717;color:white;border-radius:20px;padding:22px;margin-bottom:14px}
-h1{margin:0;font-size:28px}.sub{opacity:.75;margin-top:4px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-button{border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}.tab{background:white}.tab.active{background:#171717;color:white}
-.card{background:white;border:1px solid #ddd;border-radius:16px;padding:16px;margin:10px 0}
-input,select{width:100%;padding:13px;border:1px solid #ccc;border-radius:12px;font-size:16px;margin-top:6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none}.price{font-size:24px;font-weight:800}
-.muted{color:#666;font-size:13px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
-.primary{background:#171717;color:white;width:100%;margin-top:10px}.danger{background:#eee}.discount{font-size:13px;font-weight:700}
-.qty{max-width:130px}.result{margin-top:8px}.bar{display:flex;gap:8px}.bar button{width:auto}
-@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{padding:14px}.head{padding:18px}h1{font-size:24px}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#171717}.wrap{max-width:760px;margin:auto;padding:24px 16px}.head{background:#171717;color:white;border-radius:20px;padding:22px;margin-bottom:14px}h1{margin:0;font-size:28px}.sub{opacity:.75;margin-top:4px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}button{border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}.tab{background:white}.tab.active{background:#171717;color:white}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:16px;margin:10px 0}input{width:100%;padding:13px;border:1px solid #ccc;border-radius:12px;font-size:16px;margin-top:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none}.price{font-size:24px;font-weight:800}.muted{color:#666;font-size:13px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.primary{background:#171717;color:white;width:100%;margin-top:10px}.danger{background:#eee}.qty{max-width:130px}.result{margin-top:8px}.bar{display:flex;gap:8px}.bar input{flex:1}.bar button{width:48px;min-width:48px;padding:12px 8px}#video{width:100%;max-height:260px;border-radius:12px;background:#000;display:block;object-fit:cover}@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{padding:14px}.head{padding:18px}h1{font-size:24px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="head"><h1>🏪 Bodega Imperial</h1><div class="sub">Consulta de precios y descuentos por cantidad</div></header>
-<div class="tabs">
-<button class="tab active" data-tab="precios">💰 Precios</button>
-<button class="tab" data-tab="descuentos">🏷️ Descuentos</button>
-<button class="tab" data-tab="productos">📦 Productos</button>
-</div>
-
+<div class="tabs"><button class="tab active" data-tab="precios" type="button">💰 Precios</button><button class="tab" data-tab="descuentos" type="button">🏷️ Descuentos</button><button class="tab" data-tab="productos" type="button">📦 Productos</button></div>
 <section id="precios">
-<div class="card">
-<label><b>Buscar por nombre o código de barras</b></label>
-<div class="bar"><input id="buscar" placeholder="Ej. Coca-Cola o 7501055300076"><button id="limpiar">×</button></div>
-</div>
+<div class="card"><label><b>Buscar por nombre o código de barras</b></label><div class="bar"><input id="buscar" placeholder="Ej. Coca-Cola o 7501055300076"><button id="scanBtn" type="button" title="Escanear">📷</button><button id="limpiar" type="button">×</button></div></div>
+<div id="scannerPanel" class="card hidden"><div class="row"><b>Escáner de código</b><button id="cerrarScanner" class="danger" type="button">Cerrar</button></div><video id="video" autoplay playsinline muted></video><div id="scanStatus" class="muted">Apunta la cámara al código de barras.</div></div>
 <div id="listaPrecios"></div>
 </section>
-
-<section id="descuentos" class="hidden">
-<div class="card"><b>🏷️ Descuentos por cantidad</b><div class="muted">El descuento se aplica desde la cantidad indicada.</div></div>
-<div id="listaDescuentos"></div>
-</section>
-
-<section id="productos" class="hidden">
-<div class="card">
-<h3>➕ Agregar producto</h3>
-<div class="grid">
-<label>Nombre<input id="nombre" placeholder="Ej. Coca-Cola 600 ml"></label>
-<label>Código de barras<input id="codigo" placeholder="Escanea o escribe el código"></label>
-<label>Precio<input id="precio" type="number" min="0" step=".01" placeholder="18"></label>
-</div>
-<button class="primary" id="agregar">Agregar producto</button>
-</div>
-<div id="listaProductos"></div>
-</section>
+<section id="descuentos" class="hidden"><div class="card"><b>🏷️ Segundo precio por cantidad</b><div class="muted">El segundo precio se aplica a partir de 3 piezas.</div></div><div id="listaDescuentos"></div></section>
+<section id="productos" class="hidden"><div class="card"><h3>➕ Agregar producto</h3><div class="grid"><label>Nombre<input id="nombre" placeholder="Ej. Coca-Cola 600 ml"></label><label>Código de barras<input id="codigo" placeholder="Escribe el código"></label><label>Primer precio<input id="precio" type="number" min="0" step=".01" placeholder="18"></label><label>Segundo precio desde 3 piezas<input id="precioDescuento" type="number" min="0" step=".01" placeholder="15"></label></div><button class="primary" id="agregar" type="button">Agregar producto</button></div><div id="listaProductos"></div></section>
 <div id="mensaje" class="muted"></div>
 </div>
-
 <script>
 const KEY="bodegaImperialProductos";
 let productos=JSON.parse(localStorage.getItem(KEY)||"null")||[
-{name:"Coca-Cola 600 ml",codigo:"7501055300076",precio:18,min:3,desc:3},
-{name:"Sabritas Original 45 g",codigo:"7501011111111",precio:18,min:3,desc:2},
-{name:"Galletas Marías 170 g",codigo:"7501000612345",precio:16,min:3,desc:0}
+{name:"Coca-Cola 600 ml",codigo:"7501055300076",precio:18,precioDescuento:15},
+{name:"Sabritas Original 45 g",codigo:"7501011111111",precio:18,precioDescuento:16},
+{name:"Galletas Marías 170 g",codigo:"7501000612345",precio:16,precioDescuento:16}
 ];
-const $=s=>document.querySelector(s), money=n=>new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(n);
+productos=productos.map(p=>({name:p.name??p.nombre??"",codigo:p.codigo||"",precio:Number(p.precio)||0,precioDescuento:Number(p.precioDescuento??(Number(p.precio)-(Number(p.desc)||0)))||0}));
+let stream=null,timer=null;
+const $=s=>document.querySelector(s),money=n=>new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(n);
 function save(){localStorage.setItem(KEY,JSON.stringify(productos))}
-function final(p,q){return q>=p.min&&p.desc>0?Math.max(0,p.precio-p.desc):p.precio}
+function precioAplicado(p,q){return q>=3?p.precioDescuento:p.precio}
 function renderPrecios(){
- let q=$("#buscar").value.trim().toLowerCase();
- let a=productos.filter(p=>(p.nombre+" "+p.codigo).toLowerCase().includes(q));
- $("#listaPrecios").innerHTML=a.length?a.map((p,i)=>`<div class="card"><div class="row"><div><b>${p.nombre}</b><div class="muted">Código: ${p.codigo||"sin código"}</div></div><div class="price">${money(p.precio)}</div></div><label>Cantidad<input class="cantidad qty" data-i="${productos.indexOf(p)}" type="number" min="1" value="1"></label><div class="result" id="r${productos.indexOf(p)}"></div></div>`).join(""):"<div class='card'>No se encontró ese producto.</div>";
- document.querySelectorAll(".cantidad").forEach(x=>x.oninput=calcular);
- calcular();
+ const q=$("#buscar").value.trim().toLowerCase();
+ const encontrados=productos.filter(p=>(p.name+" "+p.codigo).toLowerCase().includes(q));
+ $("#listaPrecios").innerHTML=encontrados.length?encontrados.map(p=>{const i=productos.indexOf(p);return `<div class="card"><div class="row"><div><b>${p.name}</b><div class="muted">Código: ${p.codigo||"sin código"}</div></div><div class="price">${money(p.precio)}</div></div><div class="grid"><label class="qty">Cantidad<input class="cantidad" data-i="${i}" type="number" min="1" value="1"></label><div class="result" id="r${i}"></div></div></div>`}).join(""):"<div class=\"card\"><div class=\"muted\">No se encontraron productos.</div></div>";
+ document.querySelectorAll(".cantidad").forEach(x=>x.oninput=calcular);calcular();
 }
-function calcular(){
- document.querySelectorAll(".cantidad").forEach(x=>{
-  let p=productos[+x.dataset.i],q=Math.max(1,parseInt(x.value)||1),u=final(p,q),total=u*q;
-  $("#r"+x.dataset.i).innerHTML=q>=p.min&&p.desc>0?`🏷️ Desde ${p.min} piezas: <b>${money(u)} c/u</b> · Total: <b>${money(total)}</b>`:`Precio normal: <b>${money(u)} c/u</b> · Total: <b>${money(total)}</b>`;
- });
-}
-function renderDescuentos(){
- $("#listaDescuentos").innerHTML=productos.map((p,i)=>`<div class="card"><div class="row"><div><b>${p.nombre}</b><div class="muted">Precio normal: ${money(p.precio)}</div></div><b>${p.desc?money(p.precio-p.desc):"Sin descuento"}</b></div><div class="grid"><label>Aplicar desde<input class="min" data-i="${i}" type="number" min="2" value="${p.min}"></label><label>Descuento por pieza<input class="desc" data-i="${i}" type="number" min="0" step=".01" value="${p.desc}"></label></div><button class="primary guardar" data-i="${i}">Guardar descuento</button></div>`).join("");
- document.querySelectorAll(".guardar").forEach(b=>b.onclick=()=>{let i=+b.dataset.i;p=productos[i];p.min=Math.max(2,parseInt(document.querySelector(`.min[data-i="${i}"]`).value)||2);p.desc=Math.max(0,Number(document.querySelector(`.desc[data-i="${i}"]`).value)||0);p.desc=Math.min(p.desc,p.precio);save();renderAll();mensaje("Descuento actualizado.")});
-}
-function renderProductos(){
- $("#listaProductos").innerHTML=productos.map((p,i)=>`<div class="card"><div class="row"><div><b>${p.nombre}</b><div class="muted">${p.codigo||"sin código"}</div></div><button class="danger editar" data-i="${i}">✏️ Editar</button></div></div>`).join("");
- document.querySelectorAll(".editar").forEach(b=>b.onclick=()=>{let i=+b.dataset.i,p=productos[i],n=prompt("Nombre",p.nombre);if(n===null)return;let c=prompt("Código de barras",p.codigo);if(c===null)return;let pr=prompt("Precio",p.precio);if(pr===null)return;let v=Number(pr);if(!n.trim()||!Number.isFinite(v)||v<0)return alert("Datos no válidos");p.nombre=n.trim();p.codigo=c.trim();p.precio=v;p.desc=Math.min(p.desc,p.precio);save();renderAll()});
-}
+function calcular(){document.querySelectorAll(".cantidad").forEach(x=>{const p=productos[+x.dataset.i],q=Math.max(1,parseInt(x.value)||1),u=precioAplicado(p,q);$("#r"+x.dataset.i).innerHTML=q>=3?`🏷️ Segundo precio: <b>${money(u)} c/u</b> · Total: <b>${money(u*q)}</b>`:`Primer precio: <b>${money(u)} c/u</b> · Total: <b>${money(u*q)}</b>`})}
+function renderDescuentos(){$("#listaDescuentos").innerHTML=productos.map((p,i)=>`<div class="card"><b>${p.name}</b><div class="grid"><label>Primer precio<input class="normal" data-i="${i}" type="number" min="0" step=".01" value="${p.precio}"></label><label>Segundo precio desde 3 piezas<input class="descuento" data-i="${i}" type="number" min="0" step=".01" value="${p.precioDescuento}"></label></div><button class="primary guardar" data-i="${i}" type="button">Guardar precios</button></div>`).join("");document.querySelectorAll(".guardar").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;productos[i].precio=Math.max(0,parseFloat($(`.normal[data-i="${i}"]`).value)||0);productos[i].precioDescuento=Math.max(0,parseFloat($(`.descuento[data-i="${i}"]`).value)||0);save();renderAll();mensaje("Precios actualizados")})}
+function renderProductos(){$("#listaProductos").innerHTML=productos.map((p,i)=>`<div class="card"><div class="row"><div><b>${p.name}</b><div class="muted">${p.codigo||"sin código"}</div><div>1 pieza: <b>${money(p.precio)}</b> · 3 o más: <b>${money(p.precioDescuento)}</b></div></div><button class="danger editar" data-i="${i}" type="button">Editar</button></div></div>`).join("");document.querySelectorAll(".editar").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,p=productos[i];const n=prompt("Nombre",p.name);if(n===null)return;const c=prompt("Código de barras",p.codigo);if(c===null)return;const normal=prompt("Primer precio",p.precio);if(normal===null)return;const desc=prompt("Segundo precio desde 3 piezas",p.precioDescuento);if(desc===null)return;p.name=n.trim()||p.name;p.codigo=c.trim();p.precio=Math.max(0,parseFloat(normal)||0);p.precioDescuento=Math.max(0,parseFloat(desc)||0);save();renderAll();mensaje("Producto actualizado")})}
 function renderAll(){renderPrecios();renderDescuentos();renderProductos()}
-function mensaje(t){$("#mensaje").textContent=t;setTimeout(()=>$("#mensaje").textContent="",2200)}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");["precios","descuentos","productos"].forEach(id=>$("#"+id).classList.toggle("hidden",id!==b.dataset.tab))});
-$("#buscar").oninput=renderPrecios;$("#limpiar").onclick=()=>{$("#buscar").value="";renderPrecios()};
-$("#agregar").onclick=()=>{let n=$("#nombre").value.trim(),c=$("#codigo").value.trim(),p=Number($("#precio").value);if(!n||!Number.isFinite(p)||p<0){mensaje("Completa nombre y precio.");return}productos.push({nombre:n,codigo:c,precio:p,min:3,desc:0});save();["nombre","codigo","precio"].forEach(id=>$("#"+id).value="");renderAll();mensaje("Producto agregado.")};
+function mensaje(t){$("#mensaje").textContent=t;setTimeout(()=>$("#mensaje").textContent="",2500)}
+async function startScanner(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!("BarcodeDetector" in window)){mensaje("Tu navegador no permite escaneo automático; escribe el código manualmente.");return}$("#scannerPanel").classList.remove("hidden");try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});$("#video").srcObject=stream;const detector=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128","code_39"]});$("#scanStatus").textContent="Escaneando…";timer=setInterval(async()=>{try{const r=await detector.detect($("#video"));if(!r.length)return;$("#buscar").value=String(r[0].rawValue||"");renderPrecios();stopScanner();}catch(e){}},600)}catch(e){stopScanner();mensaje("No se pudo acceder a la cámara. Revisa los permisos.")}}
+function stopScanner(){if(timer)clearInterval(timer);timer=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$("#video").srcObject=null;$("#scannerPanel").classList.add("hidden")}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");["precios","descuentos","productos"].forEach(id=>document.getElementById(id).classList.toggle("hidden",id!==b.dataset.tab))});
+$("#buscar").oninput=renderPrecios;$("#limpiar").onclick=()=>{$("#buscar").value="";renderPrecios()};$("#scanBtn").onclick=startScanner;$("#cerrarScanner").onclick=stopScanner;
+$("#agregar").onclick=()=>{const name=$("#nombre").value.trim(),codigo=$("#codigo").value.trim(),precio=Number($("#precio").value),precioDescuento=Number($("#precioDescuento").value);if(!name||!Number.isFinite(precio)||precio<0||!Number.isFinite(precioDescuento)||precioDescuento<0){mensaje("Completa los dos precios.");return}productos.push({name,codigo,precio,precioDescuento});save();renderAll();["#nombre","#codigo","#precio","#precioDescuento"].forEach(id=>$(id).value="");mensaje("Producto agregado")};
 renderAll();
 </script>
 </body>
